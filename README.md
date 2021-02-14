@@ -164,3 +164,43 @@ renoOffice name = nameText ++ " - PO Box 456 - Reno, NV 89523"
   where nameText = snd name
 ```
 
+## クロージャと部分適用
+
+### クロージャ
+
+ラムダ関数作成時に、外側から渡される変数はキャプチャされる
+
+```haskell
+genIfEven f = (\x -> ifEven f x) -- fがキャプチャされる
+```
+
+### 部分適用
+
+また、引数が足りずに関数がよばれた場合は、それを待機する関数が返される
+この機能のおかげであまりクロージャを意識する場面は少ない
+ただ、左から順番に適用されていくため、引数は汎用的なものから並べる必要がある
+
+```haskell
+add4 a b c d = a + b + c + d
+anotherAdd = add4 1 2
+anotherAdd 3 4 -- 10
+```
+
+### flip
+
+引数を入れ替えた関数を返す
+独自に実装するとこうなる
+
+```haskell
+flipBinaryArgs fn = (\x y -> fn  y x)
+```
+
+これは標準のflip関数を使って同じことができる
+
+```haskell
+diff x y = x - y
+revDiff = flip diff
+-- diff 5 3
+-- diff 3 5
+```
+
