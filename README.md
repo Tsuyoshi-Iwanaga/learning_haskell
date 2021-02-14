@@ -386,3 +386,59 @@ myHead (x:xs) = x
 myHead [] = error "No head for empty list"
 ```
 
+## 8.再帰の具体例
+
+### リストで再帰を使う
+
+リストで使用できる関数をいくつか再帰を使って実装してみる
+
+#### length
+
+```haskell
+myLength [] = 0
+myLength (x:xs) = 1 + myLength xs
+```
+
+#### take
+
+```haskell
+myTake _ [] = []
+myTake 0 _ = []
+myTake n (x:xs) = x:(myTake (n-1) xs)
+```
+
+#### cycle
+
+```haskell
+myCycle (first:rest) = first:(myCycle (rest ++ [first]))
+```
+
+#### reverse
+
+```haskell
+myReverse [] = []
+myReverse (x:[]) = [x]
+myReverse (x:xs) = (myReverse xs) ++ [x]
+```
+
+### 再帰ルールに従っているのに危険な例(アッカーマン関数)
+
+```haskell
+ackermann 0 n = n + 1
+ackermann m 0 = ackermann (m-1) 1
+ackermann m n = ackermann (m-1) (ackermann m (n-1))
+```
+
+再帰は自身の中で自身を呼び出す構造のため計算量が爆発しやすい
+
+### 再帰ルールから逸脱しているが実用的には問題ない例(コラッツ予想)
+
+```haskell
+collatz 1 = 1
+collatz n = if even n
+  then 1 + collatz (n `div` 2)
+  else 1 + collatz (n * 3 + 1)
+```
+
+奇数の時の終了条件が一見すると終了条件に近づいて行っていないように見える
+ただしこれは1に近づいていき必ず終了すると推定されている
