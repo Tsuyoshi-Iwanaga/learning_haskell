@@ -442,3 +442,58 @@ collatz n = if even n
 
 奇数の時の終了条件が一見すると終了条件に近づいて行っていないように見える
 ただしこれは1に近づいていき必ず終了すると推定されている
+
+## 9.高階関数
+
+引数に関数を受け取る関数のこと
+再帰を単純化する用途で使われることも多い
+
+### map
+
+```haskell
+map01 = map reverse ["dog", "cat", "moose"]
+map02 = map head ["dog", "cat", "moose"]
+map03 = map (take 4) ["pumpkin", "pie", "peanut butter"]
+```
+
+### filter
+
+```haskell
+fil01 = filter even [1 .. 4]
+fil02 = filter (\(x:xs) -> x == 'a') ["apple", "banana", "avocado"]
+```
+
+### foldl
+
+```haskell
+foldl01 = foldl (+) 0 [1 .. 4]
+```
+
+いくつかfoldlを利用した畳み込みの例
+
+```haskell
+-- 総乗
+myProduct aList = foldl (*) 1 aList
+
+-- 文字の連結
+concatAll xs = foldl (++) "" xs
+
+-- 累乗して足し合わせる
+sumOfSquares xs = foldl (+) 0 (map (^2) xs)
+
+-- 順番を逆にする
+rcons x y = y:x
+myReverse xs = foldl rcons [] xs
+```
+
+### foldr
+
+右畳み込み、foldlと比較すると減算のように順序が重要な場合に差が出てくる
+また無限の長さを持つリストでうまく動作する唯一の畳み込み
+
+```haskell
+foldl (-) 0 [1 .. 4] -- 0-1-2-3-4よって-10
+foldr (-) 0 [1 .. 4] -- 4-3-2-1-0よって-2
+```
+
+## 
