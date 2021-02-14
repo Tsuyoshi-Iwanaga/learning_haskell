@@ -113,3 +113,54 @@ add2 y = (\x -> y + x) 3 -- add2 1 is 4: xは引数の3、yは外側の引数の
 add3 y = (\y -> (\x -> y + x) 1) 2 -- add3 1 is 3: xは引数の1、yは引数の2
 ```
 
+## ファーストクラス関数(第一級関数)
+
+### 別の関数を引数で受け取る
+
+関数を値として扱い、引数として利用できる
+
+```haskell
+ifEven myFunc x = if even x
+  then myFunc x
+  else x
+
+inc n = n + 1
+double n = n * 2
+square n = n ^ 2
+
+ifEvenInc n = ifEven inc n
+ifEvenDouble n = ifEven double n
+ifEvenSquare n = ifEven square n
+```
+
+### 返り値を別の関数として返す
+
+関数を値として扱い、関数の引数として返すことができる
+
+```haskell
+addressletter name location = (getlocationfunction location) name
+
+-- dispatch(戻り値として関数を返す)
+getLocationFunction location = case location of
+  "ny" -> nyOffice
+  "sf" -> sfOffice
+  "reno" -> renoOffice
+  _ -> (\name -> (fst name) ++ " " ++ (snd name))
+
+-- ny
+nyOffice name = nameText ++ ": PO Box 789 - New York, NY, 10013"
+  where nameText = (fst name) ++ " " ++ (snd name)
+
+-- sf
+sfOffice name = if lastName < "L"
+  then nameText ++ " - PO Box 1234 - San Francisco, CA, 94111"
+  else nameText ++ " - PO Box 1010 - San Francisco, CA, 94109"
+  where
+    lastName = snd name
+    nameText = (fst name) ++ " " ++ lastName
+
+-- reno
+renoOffice name = nameText ++ " - PO Box 456 - Reno, NV 89523"
+  where nameText = snd name
+```
+
