@@ -496,4 +496,72 @@ foldl (-) 0 [1 .. 4] -- 0-1-2-3-4よって-10
 foldr (-) 0 [1 .. 4] -- 4-3-2-1-0よって-2
 ```
 
-## 
+## 10.関数型を用いたオブジェクト指向
+
+### 単純な例
+
+関数型におけるオブジェクトとは**値がキャプチャされた状態のラムダ関数**(つまり**クロージャ**)
+これに対し、第一級関数として関数を渡すとオブジェクト内部でそれがキャプチャされた値に適用される仕組み
+このようにして外から渡される関数を**メッセージ**とよび、メッセージをオブジェクトに送信するなどと言う
+
+```haskell
+-- コンストラクタ
+cup amount = \message -> message amount
+```
+
+```haskell
+-- インスタンス化
+coffeeCup = cup 12
+```
+
+```haskell
+-- ゲッターとなるメッセージ
+getAmount aCup = aCup (\x -> x)
+```
+
+```haskell
+-- 実行
+getAmount coffeeCup -- 12
+```
+
+### 複雑な例
+
+内部で管理する値が複数の場合
+
+```haskell
+-- コンストラクタ
+robot (name, attack, hp) = \message -> message (name, attack, hp)
+```
+
+```haskell
+-- インスタンス化
+killerRobot = robot ("Killer3r", 25, 200)
+```
+
+```haskell 
+-- ゲッター
+getName aRobot = aRobot (\(n, _, _) -> n)
+getAttack aRobot = aRobot (\(_, a, _) -> a)
+getHP aRobot = aRobot (\(_, _, h) -> h)
+```
+
+```haskell
+-- まとめて表示
+printRobot aRobot = aRobot (\(n, a, h) -> n ++ "/" ++ (show a) ++ "/" ++ (show h))
+```
+
+```haskell
+-- セッター
+setName aRobot name = aRobot (\(n, a, h) -> robot (name, a, h))
+setAttack aRobot attack = aRobot (\(n, a, h) -> robot (n, attack, h))
+setHP aRobot hp = aRobot (\(n, a, h) -> robot (n, a, hp))
+```
+
+```haskell
+-- 複数のオブジェクトを連携させる
+damage aRobot attackDamage = aRobot (\(n, a, h) -> robot (n, a, h - attackDamage))
+
+fight aRobot defender = damage defender attack
+  where attack = if getHP aRobot > 10 then getAttack aRobot else 0
+```
+
