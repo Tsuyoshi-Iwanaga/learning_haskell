@@ -565,3 +565,108 @@ fight aRobot defender = damage defender attack
   where attack = if getHP aRobot > 10 then getAttack aRobot else 0
 ```
 
+## 11.型の基礎
+
+Haskellは他の関数型言語と比べると独特の型システムを持っている
+
+### 基本の型
+
+基本的には**型推論**により型が決定されるが、明示的に型を指定することも可能
+
+```haskell
+x :: Int
+x = 2
+
+y :: Integer
+y = 2
+
+letter :: Char
+letter = 'a'
+
+interestRate :: Double
+interestRate = 0.375
+
+isFun :: Bool
+isFun = True
+```
+
+```haskell
+values :: [Int]
+values = [1, 2, 3]
+
+testScores :: [Double]
+testScores = [0.99, 0.7, 0.8]
+
+letters :: [Char]	-- Stringと同じ
+letters = ['a', 'b', 'c'] -- "abc"と同じ
+```
+
+### 関数の型
+
+関数にも型シグネチャがある
+
+```haskell
+double :: Int -> Int
+double n = n * 2
+```
+
+```haskell
+half :: Int -> Double
+half n = (fromIntegral n) / 2 -- nをIntから汎用的な値へ変換する
+```
+
+### 文字列からの変換と文字列への変換
+
+文字列「への」変換は**show**を使う
+文字列「からの」変換は**read**を使う
+
+```haskell 
+show 6 -- "6"
+show 'c' -- "'c'"
+show 6.0 -- "6.0"
+```
+
+```haskell
+-- 型推論に任せる
+z = read "6"
+q = z / 2
+
+-- 明示的に型を宣言する ①変数に型を指定する
+anotherNumber :: Int
+anotherNumber = read "6"
+
+-- 明示的に型を宣言する ②関数呼び出しの時に戻り値の型を末尾に指定する
+read "6" :: Int
+```
+
+### 複数の引数を持つ関数のシグネチャ
+
+複数の引数を持つ関数のシグネチャはこのように書く
+**最後の型は常に戻り値の型**となる
+
+```haskell
+makeAddress :: Int -> String -> String -> (Int, String, String)
+makeAddress number street town = (number, street, town)
+```
+
+実はHaskellの内部では**全ての関数が引数を1つしか受け取らない**ようになっており、**引数を複数受け取る関数は入れ子のラムダ関数**で実現されている
+
+```haskell
+makeAddress number street town = (number, street, town)
+
+--本当はこうなってる
+makeAddress = (\number -> (\street -> (\town -> (number, street, town))))
+```
+
+### 型変数
+
+例えば複数の型を受けて問題なく動作するような関数はどうすればよいか
+こういう時のために型変数という仕組みがある
+
+```haskell
+simple :: a -> a
+simple x = x
+```
+
+
+
