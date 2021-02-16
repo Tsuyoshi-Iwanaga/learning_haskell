@@ -668,5 +668,117 @@ simple :: a -> a
 simple x = x
 ```
 
+## 12.カスタム型の作成
 
+型に別名をつけたり、型を新しく作成したりすることができる
 
+### 型シノニム(別名)
+
+```haskell
+type FirstName = String
+type LastName = String
+type MiddleName = String
+type Age = Int
+type Height = Int
+```
+
+上記のように定義しておくと下記の関数シグネチャは同じ内容になる
+
+```haskell
+patient :: String -> String -> Int -> Int -> String
+```
+
+```haskell
+patient :: FirstName -> LastName -> Age -> Height -> String
+```
+
+### 新しい型を作成する
+
+新しい型を作成する
+
+data **型コンストラクタ** = **データコンストラクタ** | **データコンストラクタ**...
+
+```haskell
+data PhType = Pos | Neg
+data ABOType = A | B | O | AB
+```
+
+複数の型を組み合わせて新しい型を定義することも可能
+
+```haskell
+data BloodType = BloodType ABOType RhType
+```
+
+インスタンス化はこんな感じで行う
+
+```haskell
+patient1BT :: BloodType
+patient1BT = BloodType A Pos
+
+patient2BT :: BloodType
+patient2BT = BloodType O Neg
+
+patient3BT :: BloodType
+patient3BT = BloodType AB Pos
+```
+
+インスタンスに対して適用ができるメッセージ群(主にゲッター)
+
+```haskell
+showRh :: RhType -> String
+showRh Pos = "+"
+showRh Neg = "-"
+
+showABO :: ABOType -> String
+showABO A = "A"
+showABO B = "B"
+showABO O = "O"
+showABO AB = "AB"
+
+showBloodType :: BloodType -> String
+showBloodType :: (BloodType abo rh) = showABO abo ++ showRh rh
+
+canDonateTo :: BloodType -> BloodType -> Bool
+canDonateTo (BloodType O _) _ = True
+canDonateTo (BloodType AB _) _ = True
+canDonateTo (BloodType A _) (BloodType A _) = True
+canDonateTo (BloodType B _) (BloodType B _) = True
+canDonateTo _ _ = False
+```
+
+### レコード構文
+
+中括弧{}で囲んで型を定義する
+
+```haskell
+data Patient = Patient {
+	name :: Name,
+	sex :: Sex,
+	age :: Int,
+	height :: Int,
+	weight :: Int,
+	bloodType :: BloodType
+}
+```
+
+インスタンス化はこんな感じ
+
+```haskell
+johnDoe :: Patient
+johnDoe = Patient {
+	name = Name "john" "Doe",
+	age = 43,
+	sex = Female,
+	height = 62,
+	weight = 115,
+	bloodType = BloodType O Neg
+}
+```
+
+レコード構文で作成したインスタンスにはゲッターやセッターが自動で作成される
+
+```haskell
+height johnDoe -- 62
+
+johnDoeUpdated = johnDoe { age = 44 }
+```
