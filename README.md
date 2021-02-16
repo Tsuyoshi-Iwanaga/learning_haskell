@@ -782,3 +782,101 @@ height johnDoe -- 62
 
 johnDoeUpdated = johnDoe { age = 44 }
 ```
+
+## 13.型クラス
+
+### 型クラスとは
+
+共通の振る舞いによって型をグループ化することができる
+オブジェクト指向言語における**インターフェース**に似ている
+型クラスは型がサポートしなければいけない関数を指定する
+
+### 型の調べ方
+
+GHCiで **:t** とすると関数の型を調べることができる
+
+```haskell
+simple x = x
+```
+
+これを :t で調べてみる
+
+```haskell
+:t simple
+```
+
+このように返ってくる
+
+```haskell
+simple :: p -> p
+```
+
+例えば(+)を同じように型を調べてみる
+
+```haskell
+:t (+)
+(+) :: Num a => a -> a -> a -- Num a => って何?
+```
+
+### 型クラス
+
+共通の振る舞いを持つ型のグループを表す手段
+例えば下記であれば「**クラスNumに属する型 a が存在する**」ということ
+
+ここでクラスNumに属する型は最低でも関数(+)が定義されていなければならない
+
+型と型クラスを確認したい場合は **:i** を使用するとよい
+下記のように型クラスの定義が表示される
+
+```haskell
+:i Num
+type Num :: * -> Constraint
+class Num a where
+  (+) :: a -> a -> a
+  (-) :: a -> a -> a
+  (*) :: a -> a -> a
+  negate :: a -> a
+  abs :: a -> a
+  signum :: a -> a
+  fromInteger :: Integer -> a
+```
+
+型クラスがなければIntegerの加算とDoubleの加算など処理は似ているが型が異なる場合は別の関数として定義しなければならなくなる
+
+```haskell
+addInt :: Int -> Int -> Int
+addInt x y = x + y
+
+addDouble :: Double -> Double -> Double
+addDouble x y = x + y
+```
+
+型変数を使うという手もあるが、それではあまりに柔軟すぎる
+(加算を想定していない型であっても指定はできてしまう)
+
+```haskell
+addAllTypes :: a -> a -> a
+```
+
+Numクラスに属する型に制限することができれば、IntでもDoubleでも同じ関数で処理ができる。
+かつNumクラスに属する型は必ず(+)を実装しているので安心
+
+```haskell
+addNum :: Num => a -> a -> a -> a
+addNum x y = x + y
+```
+
+### 型クラスの定義
+
+このように型変数を用いて記述する
+型変数を用いなければ特定の型に強く結びついてしまうので注意
+
+型クラスを定義する際は型変数だと緩すぎるのを避けるため、型変数に制約をつけてあげるイメージで捉えると良い
+
+```haskell
+class TypeName a where -- aはこの型クラスを実装する型用のプレースホルダとなる型変数
+	func1 :: a -> a
+	func2 :: a -> String
+	func3 :: a -> a -> Bool
+```
+
