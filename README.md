@@ -880,3 +880,44 @@ class TypeName a where -- aはこの型クラスを実装する型用のプレ�
 	func3 :: a -> a -> Bool
 ```
 
+## 14. 型クラスの使用
+
+### 型クラスの実装について
+
+型を生成したときに deriving を付与すると型クラスを実装できる
+
+```haskell
+data SixSidedDie = S1 | S2 | S3 | S4 | S5 | S6 deriving Show
+```
+
+これを独自に実装する必要がある場合は下記のような構文を使う
+Show型クラスのインスタンスとしてSixSideDieを実装するという指定になる
+
+```haskell
+instance Show SixSideDie where
+  show S1 = "one"
+  show S2 = "two"
+  show S3 = "three"
+  show S4 = "four"
+  show S5 = "five"
+  show S6 = "six"
+```
+
+ちなみに下記のようにするとうまくいかない
+
+```haskell
+show :: SixSideDie -> String
+show S1 = "one"
+...
+```
+
+理由は型クラスにすでに存在する定義とバッティングしてしまうこと
+使用する型によって同じ関数の振る舞いを変えることを**ポリモーフィズム**という
+
+### 型クラスの実装を調べる方法
+
+下記のサイトで情報を調べる
+
+Hoogle
+https://hoogle.haskell.org/
+
