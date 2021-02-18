@@ -921,3 +921,42 @@ show S1 = "one"
 Hoogle
 https://hoogle.haskell.org/
 
+## 16. 直積型と直和型
+
+直積型はほぼ全ての言語にあるが、直和型はそこまで多くない
+
+### 直積型(AND)
+
+```haskell
+data AuthorName = AuthorName String String
+data Book = Book AuthorName String String Int Double
+```
+
+レコード構文を使うとこうなる
+
+```haskell
+data Book = Book {
+	author :: AuthorName,
+	isbn :: String,
+	title :: String,
+	year :: Int,
+	price :: Double
+}
+```
+
+直積型の問題点として、階層構造で考えることを強いられる点がある。
+スーパークラス/サブクラスのどこにどの型を持たせるかは流動的かつ修正量も多くなってしまう
+
+### 直和型(OR)
+
+```haskell
+type FirstName = String
+type LastName = String
+type MiddleName = String
+
+data Name = Name FirstName LastName | NameWithMiddle FirstName MiddleName LastName
+```
+
+この例ではName型は2つの型コンストラクタをとる
+
+後からName型に新しい型コンストラクタを追加しようとする場合も簡単にできる
