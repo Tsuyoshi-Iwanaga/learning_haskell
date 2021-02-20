@@ -960,3 +960,47 @@ data Name = Name FirstName LastName | NameWithMiddle FirstName MiddleName LastNa
 この例ではName型は2つの型コンストラクタをとる
 
 後からName型に新しい型コンストラクタを追加しようとする場合も簡単にできる
+
+## 17. 合成: Semigroup/Monoid
+
+### 関数合成
+
+```haskell
+import Data.List
+
+myLast :: [a] -> a
+myLast = head . reverse
+
+myMin :: Ord a => [a] -> a
+myMin = head . sort
+```
+
+### Semigroup
+
+同じ型のデータ同士を組み合わせる手段を提供する。<>演算子の機能を定義する必要がある
+
+```haskell
+import Data.Semigroup
+
+instance Semigroup Integer where
+	(<>) x y = x + y
+
+-- (<>) 1 2
+```
+
+### Monoid
+
+Semigroupに似ているが、型の単位元の指定が必要
+整数の加算であれば0、リストであれば[]のようなものが単位元になる
+
+Semigroupよりも先に導入されたこともあり、メソッドがちょっとだけSemigroupと異なる
+
+```haskell
+class Monoid a where
+	mempty :: a
+	mappend :: a -> a -> a
+	mconcat :: [a] -> a
+	
+-- mconcat ["does", " this", " make", "sence?"]
+```
+
