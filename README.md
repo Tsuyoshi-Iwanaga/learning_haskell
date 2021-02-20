@@ -1004,3 +1004,109 @@ class Monoid a where
 -- mconcat ["does", " this", " make", "sence?"]
 ```
 
+## 18.パラメータ化された型
+
+関数と同様に型も引数を取ることができる
+
+```haskell
+data Box a = Box a deriving Show
+```
+
+同じ型を3つとるTriple型の定義
+
+```haskell
+data Triple = Triple a a a deriving Show
+
+type Point3D = Triple Double --Doubleを3つもつ型
+aPoint :: Point3D
+aPoint = Triple 0.1 53.2 12.3
+
+type FullName = Triple String --Stringを3つ持つ型
+aPerson :: FullName
+aPerson = Triple "Howard" "Phillips" "Lovecraft"
+
+type Initials = Triple Char --Charを3つもつ型
+initials :: Initials
+initials = Triple 'H' 'P' 'L'
+```
+
+Triple型のアクセサ
+
+```haskell
+first :: Triple a -> a
+first (Triple x _ _) = x
+
+second :: Triple a -> a
+second (Triple _ x _) = x
+
+third :: Triple a -> a
+third (Triple _ _ x) = x
+```
+
+TripleをListに変換する関数や要素に関数を適用する関数
+
+```haskell
+toList :: Triple a -> [a]
+toList (Triple x y z) = [x, y, z]
+
+transform :: (a -> a) -> Triple a -> Triple a
+transform f (Triple x y z) = Triple (f x) (f y) (f z)
+```
+
+### タプル
+
+タプルの定義は以下のようになっている
+
+```haskell
+data (,) a b = (,) a b
+```
+
+```haskell
+itemCount1 :: (String, Int)
+```
+
+### カインド(型の型)
+
+```haskell
+-- パラメータを1つとる型のカインド
+* -> *
+-- パラメータを2つとる型のカインド
+* -> * -> *
+```
+
+カインドを確認する方法
+
+```haskell
+import qualified Data.Map as Map
+
+:k Int
+:k Triple
+:k []
+```
+
+### Data.Map
+
+キーを使った値の格納、検索などができる。
+他の言語ではDictionaryと呼ばれる型
+
+```haskell
+import qualified Data.Map as Map
+```
+
+```haskell
+data Organ = Heart | Brain | Kidney | Spleen deriving (Show, Eq)
+organs :: [Organ]
+organs = [Heart, Heart, Brain, Spleen, Spleen, Kidney]
+
+ids :: [Int]
+ids = [2, 7, 13, 14, 21, 24]
+
+organPairs :: [(Int, Organ)]
+organPairs = zip ids organs
+
+organCatalog :: Map.Map Int Organ
+organCatalog = Map.fromList organPairs
+
+-- Map.lookup 7 organCatalog
+```
+
