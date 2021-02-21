@@ -1110,3 +1110,42 @@ organCatalog = Map.fromList organPairs
 -- Map.lookup 7 organCatalog
 ```
 
+## 19. Maybe型(欠損値への対応)
+
+Maybeは値の**コンテキスト**を表す型であり、欠損する可能性がある値を表す
+ほとんどの他の言語では欠損値はnullを使って表現されている
+
+Maybe型の定義はこのようになっている
+Justとは型aのどれかという意味
+
+```haskell
+data Maybe a = Nothing | Just a
+```
+
+### Nullの問題点
+
+* プログラマが忘れずにエラーをcatchしてあげる必要がある
+* エラーとはならなくてもnullを返すところでちゃんと対処するコードを記述する必要がある
+
+```haskell
+availableOrgans :: [Maybe Organ]
+availableOrgans = getDrawerContents possibleDrawers organCatalog
+```
+
+```haskell
+countOrgan :: Organ -> [Maybe Organ] -> Int
+countOrgan organ available = length (filter (\x -> x == Just organ) available)
+```
+
+### 欠損値があるかどうかの判定
+
+Data.MaybeモジュールがimportされていればisJustやisNothingなどの関数を使うことができる
+
+これが使えなくても以下のような関数で判定が可能
+
+```haskell
+isSomething :: Maybe Organ -> Bool
+isSomething Nothing = False
+isSomething (Just _) = True
+```
+
