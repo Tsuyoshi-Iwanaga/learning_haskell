@@ -42,5 +42,37 @@ myBooks :: [Book]
 myBooks = [book1, book2, book3]
 
 -- output
+-- main :: IO ()
+-- main = TIO.writeFile "books.html" (booksToHtml myBooks)
+
+-- MARCレコードの解析
+type MarcRecordRaw = B.ByteString
+type MarcLeaderRaw = B.ByteString
+
+leaderLength :: Int
+leaderLength = 24 -- リーダーは先頭24バイト
+
+rowToInt :: B.ByteString -> Int
+rowToInt = (read . T.unpack . E.decodeUtf8)
+
+getRecordLength :: MarcLeaderRaw -> Int
+getRecordLength leader = rowToInt (B.take 5 leader) -- 先頭5バイトがレコードの長さを表す
+
+getLeader :: MarcRecordRaw -> MarcLeaderRaw
+getLeader record = B.take leaderLength record
+
+nextAndRest :: B.ByteString -> (MarcRecordRaw, B.ByteString)
+nextAndRest marcStream = B.splitAt recordLength marcStream
+  where recordLength = getRecordLength marcStream
+
+allRecords :: B.ByteString -> [MarcRecordRaw]
+allRecords marcStream = if marcStream == B.empty
+  then []
+  else next : allRecords rest
+  where (next, rest) = nextAndRest marcStream
+
 main :: IO ()
-main = TIO.writeFile "books.html" (booksToHtml myBooks)
+main = do
+  marcData <- B.readFile "sample.mrc"
+  let marcRecords = allRecords marcData
+  print (length marcRecords)
