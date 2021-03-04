@@ -3,7 +3,10 @@ helloPerson name = "Hello" ++ " " ++ name ++ "!"
 
 main :: IO ()
 main = do
-  putStrLn "Hello! What's your name?"
+  putStrLn "Hello What's your name?"
   name <- getLine
   let statement = helloPerson name
   putStrLn statement
+
+-- :kind IO
+-- IO :: * -> *
